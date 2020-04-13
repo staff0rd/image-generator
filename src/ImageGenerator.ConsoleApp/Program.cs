@@ -83,7 +83,7 @@ namespace ImageGenerator.ConsoleApp
                     var titleText = SplitIntoTwo(card.Title);
                     var bottomText = $"staffordwilliams.com • {card.Date:yyyy-MM-dd}";
                     BuildCard(inputFile, tagsText, outputFileName, titleText, textColor, font, bottomText);
-                    Console.WriteLine($"Built card for {card.Title}");
+                    Console.WriteLine($"Built card for {card.Title}: {outputFileName}");
                 }
                 catch (Exception e)
                 {
