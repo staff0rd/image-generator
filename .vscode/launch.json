@@ -10,7 +10,12 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/ImageGenerator.ConsoleApp/bin/Debug/netcoreapp3.1/ImageGenerator.ConsoleApp.dll",
-            "args": [],
+            "args": [
+                "/Users/staffordwilliams/git/blog/_posts",
+                "/Users/staffordwilliams/git/blog/_assets/post-background.png",
+                "/Users/staffordwilliams/git/blog/_assets/Roboto-Regular.ttf",
+                "/Users/staffordwilliams/git/blog/_assets/output/"
+            ],
             "cwd": "${workspaceFolder}/src/ImageGenerator.ConsoleApp",
             "console": "internalConsole",
             "stopAtEntry": false
