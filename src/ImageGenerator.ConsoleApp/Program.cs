@@ -12,11 +12,13 @@ namespace ImageGenerator.ConsoleApp
             var cardCreator = new CardCreator();
             var cards = cardCreator.GetFromPosts(args[0]);
 
-            var outputDirectory = System.IO.Directory.CreateDirectory(args[3]);
-            var inputImage = args[1];
+            var backgroundImagePath = args[1];
+
             var textColor = Color.FromRgb(17, 17, 17);
             var fonts = new FontCollection();
             var font = fonts.Install(args[2]);
+            
+            var outputDirectory = System.IO.Directory.CreateDirectory(args[3]);
 
             foreach (var card in cards)
             {
@@ -27,7 +29,7 @@ namespace ImageGenerator.ConsoleApp
                 {
                     var titleText = SplitTextIntoTwoLines(card.Title);
                     var bottomText = $"staffordwilliams.com • {card.Date:yyyy-MM-dd}";
-                    cardCreator.RenderAndWrite(inputImage, tagsText, outputFileName, titleText, textColor, font, bottomText);
+                    cardCreator.RenderAndWrite(backgroundImagePath, tagsText, outputFileName, titleText, textColor, font, bottomText);
                     Console.WriteLine($"Built card for {card.Title}: {outputFileName}");
                 }
                 catch (Exception e)
