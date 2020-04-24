@@ -7,6 +7,14 @@ namespace ImageGenerator.ConsoleApp
 {
     class Program
     {
+        /* 
+            args
+            --------
+            [0] path to posts
+            [1] path to background image
+            [1] path to font
+            [1] path to output directory
+        */
         static void Main(string[] args)
         {
             var cardCreator = new CardCreator();
@@ -17,7 +25,7 @@ namespace ImageGenerator.ConsoleApp
             var textColor = Color.FromRgb(17, 17, 17);
             var fonts = new FontCollection();
             var font = fonts.Install(args[2]);
-            
+
             var outputDirectory = System.IO.Directory.CreateDirectory(args[3]);
 
             foreach (var card in cards)
@@ -25,7 +33,7 @@ namespace ImageGenerator.ConsoleApp
                 var tagsText = string.Join(" • ", card.Tags);
                 var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, card.FileName);
 
-                try 
+                try
                 {
                     var titleText = SplitTextIntoTwoLines(card.Title);
                     var bottomText = $"staffordwilliams.com • {card.Date:yyyy-MM-dd}";
@@ -41,7 +49,7 @@ namespace ImageGenerator.ConsoleApp
 
         private static string SplitTextIntoTwoLines(string text)
         {
-            var middle = (int)(text.Length *.6);
+            var middle = (int)(text.Length * .6);
             var splitAt = String.Concat(text.Take(middle)).LastIndexOf(' ');
             return text.ReplaceAtIndex(splitAt, '\n');
         }
