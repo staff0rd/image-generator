@@ -46,7 +46,9 @@ namespace ImageGenerator.ConsoleApp
         {
             var middle = (int)(text.Length * .6);
             var splitAt = String.Concat(text.Take(middle)).LastIndexOf(' ');
-            return text.ReplaceAtIndex(splitAt, '\n');
+            if (splitAt > -1)
+                return text.ReplaceAtIndex(splitAt, '\n');
+            return text;
         }
     }
 }
