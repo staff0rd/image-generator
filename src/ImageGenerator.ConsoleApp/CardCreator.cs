@@ -60,9 +60,9 @@ namespace ImageGenerator.ConsoleApp
                     .Trim('"');
 
                 var version = lines.FirstOrDefault(line => line.StartsWith("version:"))
-                    .Replace("version:", "")
-                    .Trim()
-                    .Trim('"');
+                    ?.Replace("version:", "")
+                    ?.Trim()
+                    ?.Trim('"');
 
                 yield return new Card
                 {
