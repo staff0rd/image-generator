@@ -2,49 +2,47 @@
 using System.Linq;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using CommandLine;
+using System.IO;
 
 namespace ImageGenerator.ConsoleApp
 {
     class Program
     {
-        /* 
-            args
-            --------
-            [0] path to posts
-            [1] path to background image
-            [1] path to font
-            [1] path to output directory
-        */
         static void Main(string[] args)
         {
-            var cardCreator = new CardCreator();
-            var cards = cardCreator.GetFromPosts(args[0]);
+            args.ToList().ForEach(a => Console.WriteLine(a));
 
-            var backgroundImagePath = args[1];
-
-            var textColor = Color.FromRgb(17, 17, 17);
-            var fonts = new FontCollection();
-            var font = fonts.Install(args[2]);
-
-            var outputDirectory = System.IO.Directory.CreateDirectory(args[3]);
-
-            foreach (var card in cards)
+            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
             {
-                var tagsText = string.Join(" • ", card.Tags);
-                var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, card.FileName);
+                var cardCreator = new CardCreator();
+                var cards = cardCreator.GetFromPosts(o.PostsDirectory.Trim());
 
-                try
+                var textColor = Color.FromRgb(17, 17, 17);
+                var fonts = new FontCollection();
+                var font = fonts.Install(o.FontPath.Trim());
+
+                var outputDirectory = System.IO.Directory.CreateDirectory(o.OutputDirectory.Trim());
+
+                foreach (var card in cards)
                 {
-                    var titleText = SplitTextIntoTwoLines(card.Title);
-                    var bottomText = $"staffordwilliams.com • {card.Date:yyyy-MM-dd}";
-                    cardCreator.RenderAndWrite(backgroundImagePath, tagsText, outputFileName, titleText, textColor, font, bottomText);
-                    Console.WriteLine($"Built card for {card.Title}: {outputFileName}");
+                    var tagsText = string.Join(" • ", card.Tags);
+                    var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, card.FileName);
+
+                    try
+                    {
+                        var titleText = SplitTextIntoTwoLines(card.Title);
+                        var bottomText = $"staffordwilliams.com • {card.Date:yyyy-MM-dd}";
+                        cardCreator.RenderAndWrite(o.BackgroundImagePath.Trim(), tagsText, outputFileName, titleText, textColor, font, bottomText);
+                        Console.WriteLine($"Built card for {card.Title}: {outputFileName}");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Could not build card for {card.Title}\n\t{e.Message}");
+                    }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Could not build card for {card.Title}\n\t{e.Message}");
-                }
-            }
+            });
+
         }
 
         private static string SplitTextIntoTwoLines(string text)
