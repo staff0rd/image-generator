@@ -10,7 +10,7 @@ namespace ImageGenerator.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
+            Parser.Default.ParseArguments<Options>(args).WithParsed(o =>
             {
                 var cardCreator = new CardCreator();
                 var cards = cardCreator.GetFromPosts(o.PostsDirectory.Trim());
@@ -23,14 +23,14 @@ namespace ImageGenerator.ConsoleApp
 
                 foreach (var card in cards)
                 {
-                    var tagsText = string.Join(" • ", card.Tags);
+                    string tagsText = getTagsText(card);
                     var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, card.FileName);
 
                     try
                     {
                         var titleText = SplitTextIntoTwoLines(card.Title);
                         var bottomText = $"staffordwilliams.com • {card.Date:yyyy-MM-dd}";
-                        cardCreator.RenderAndWrite(o.BackgroundImagePath.Trim(), tagsText, outputFileName, titleText, textColor, font, bottomText);
+                        cardCreator.RenderAndWrite(o.BackgroundImagePath.Trim(), tagsText, outputFileName, titleText, textColor, font, bottomText, card.Layout == "devlog" ? "devlog" : null);
                         Console.WriteLine($"Built card for {card.Title}: {outputFileName}");
                     }
                     catch (Exception e)
@@ -42,8 +42,21 @@ namespace ImageGenerator.ConsoleApp
 
         }
 
+        private static string getTagsText(Card card)
+        {
+            if (card.Layout != "devlog")
+                return string.Join(" • ", card.Tags);
+            else
+            {
+                var first = $"{card.Tags.First()} {card.Version}";
+                return string.Join(" • ", new[] { first }.Concat(card.Tags.Skip(1)));
+            }
+        }
+
         private static string SplitTextIntoTwoLines(string text)
         {
+            if (text.Length <= 20)
+                return text;
             var middle = (int)(text.Length * .6);
             var splitAt = String.Concat(text.Take(middle)).LastIndexOf(' ');
             if (splitAt > -1)

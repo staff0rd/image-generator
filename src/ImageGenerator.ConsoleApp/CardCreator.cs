@@ -56,6 +56,12 @@ namespace ImageGenerator.ConsoleApp
 
                 var layout = lines.FirstOrDefault(line => line.StartsWith("layout:"))
                     .Replace("layout:", "")
+                    .Trim()
+                    .Trim('"');
+
+                var version = lines.FirstOrDefault(line => line.StartsWith("version:"))
+                    .Replace("version:", "")
+                    .Trim()
                     .Trim('"');
 
                 yield return new Card
@@ -64,7 +70,8 @@ namespace ImageGenerator.ConsoleApp
                     Tags = tagsLine.Split(',').Select(tag => tag.Trim()).ToArray(),
                     FileName = GenerateFileName(pathToPosts, file),
                     Date = DateTimeOffset.Parse(dateText),
-                    Layout = layout
+                    Layout = layout,
+                    Version = version
                 };
             }
         }
@@ -86,22 +93,34 @@ namespace ImageGenerator.ConsoleApp
             return fileName;
         }
 
-        public void RenderAndWrite(string inputFile, string tagsText, string outputFileName, string titleText, Color textColor, FontFamily font, string bottomText)
+        public void RenderAndWrite(string inputFile, string tagsText, string outputFileName, string titleText, Color textColor, FontFamily font, string bottomText, string subTitleText = null)
         {
-            var title = GetGlyphs(titleText, new Size(2340, 500), font);
-            title = title.Translate(1260, 1168 - title.Bounds.Height);
+            var titleHeight = subTitleText == null ? 500 : 375;
+            var center = 1168;
+
+
+
+            var title = GetGlyphs(titleText, new Size(2340, titleHeight), font);
+            System.Console.WriteLine(title.Bounds.Height);
+            if (title.Bounds.Height > 300)
+                center += (int)(title.Bounds.Height - 300);
+            title = title.Translate(1260, center - title.Bounds.Height);
 
             var tags = GetGlyphs(tagsText, new Size(2340, 75), font);
-            tags = tags.Translate(1260, 1168 + 50);
+            tags = tags.Translate(1260, center + 50);
 
             var site = GetGlyphs(bottomText, new Size(2340, 75), font);
-            site = site.Translate(1260, 1168 + 200);
+            site = site.Translate(1260, center + 200);
             var siteColor = Color.FromRgb(200, 200, 200);
+
+            var subTitle = GetGlyphs(subTitleText, new Size(2340, 100), font);
+            subTitle = subTitle.Translate(1260, center - title.Bounds.Height - subTitle.Bounds.Height - 50);
 
             using (Image img = Image.Load(inputFile))
             {
                 img.Mutate(i =>
                 {
+                    i.Fill(Brushes.Solid(textColor), subTitle);
                     i.Fill(Brushes.Solid(textColor), title);
                     i.Fill(Brushes.Solid(textColor), tags);
                     i.Fill(Brushes.Solid(siteColor), site);
