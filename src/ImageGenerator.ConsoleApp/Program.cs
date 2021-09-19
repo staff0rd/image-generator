@@ -3,7 +3,6 @@ using System.Linq;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using CommandLine;
-using System.IO;
 
 namespace ImageGenerator.ConsoleApp
 {
@@ -11,8 +10,6 @@ namespace ImageGenerator.ConsoleApp
     {
         static void Main(string[] args)
         {
-            args.ToList().ForEach(a => Console.WriteLine(a));
-
             Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
             {
                 var cardCreator = new CardCreator();
