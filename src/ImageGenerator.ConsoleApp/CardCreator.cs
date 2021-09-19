@@ -97,12 +97,8 @@ namespace ImageGenerator.ConsoleApp
         {
             var titleHeight = subTitleText == null ? 500 : 375;
             var center = 1168;
-
-
-
             var title = GetGlyphs(titleText, new Size(2340, titleHeight), font);
-            System.Console.WriteLine(title.Bounds.Height);
-            if (title.Bounds.Height > 300)
+            if (subTitleText != null && title.Bounds.Height > 300)
                 center += (int)(title.Bounds.Height - 300);
             title = title.Translate(1260, center - title.Bounds.Height);
 
