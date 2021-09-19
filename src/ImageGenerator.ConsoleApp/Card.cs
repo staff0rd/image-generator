@@ -8,5 +8,6 @@ namespace ImageGenerator.ConsoleApp
         public string[] Tags { get; set; }
         public string FileName { get; set; }
         public DateTimeOffset Date { get; set; }
+        public string Layout { get; set; }
     }
 }

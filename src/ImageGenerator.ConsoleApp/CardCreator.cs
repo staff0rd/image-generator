@@ -54,12 +54,17 @@ namespace ImageGenerator.ConsoleApp
                     .Replace("[", "")
                     .Replace("]", "");
 
+                var layout = lines.FirstOrDefault(line => line.StartsWith("layout:"))
+                    .Replace("layout:", "")
+                    .Trim('"');
+
                 yield return new Card
                 {
                     Title = title,
                     Tags = tagsLine.Split(',').Select(tag => tag.Trim()).ToArray(),
                     FileName = GenerateFileName(pathToPosts, file),
                     Date = DateTimeOffset.Parse(dateText),
+                    Layout = layout
                 };
             }
         }
