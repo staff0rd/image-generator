@@ -24,7 +24,7 @@ namespace ImageGenerator.ConsoleApp
             }
             else
             {
-                return new [] { pathToPosts };
+                return new[] { pathToPosts };
             }
         }
 
@@ -46,7 +46,8 @@ namespace ImageGenerator.ConsoleApp
                     .Replace("\"", "")
                     .Trim();
                 var dateText = lines.FirstOrDefault(line => line.StartsWith("date:"))
-                    .Replace("date: ", "");
+                    .Replace("date: ", "")
+                    .Trim('"');
 
                 tagsLine = tagsLine
                     .Replace("tags:", "")
@@ -109,7 +110,7 @@ namespace ImageGenerator.ConsoleApp
         {
             Font font = new Font(fontFamily, 100); // size doesn't matter too much as we will be scaling shortly anyway
             RendererOptions style = new RendererOptions(font, 72); // again dpi doesn't overlay matter as this code genreates a vector
-            style.Origin = new System.Numerics.Vector2(targetSize.Width/2,0);
+            style.Origin = new System.Numerics.Vector2(targetSize.Width / 2, 0);
             // this is the important line, where we render the glyphs to a vector instead of directly to the image
             // this allows further vector manipulation (scaling, translating) etc without the expensive pixel operations.
             IPathCollection glyphs = TextBuilder.GenerateGlyphs(text, style);
@@ -124,7 +125,7 @@ namespace ImageGenerator.ConsoleApp
             // move the vectorised glyph so that it touchs top and left edges 
             // could be tweeked to center horizontaly & vertically here
             glyphs = glyphs.Translate(-glyphs.Bounds.Location);
-            
+
             //glyphs = glyphs.Translate(0, targetSize.Height * 3);
             return glyphs;
         }
