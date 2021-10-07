@@ -5,13 +5,49 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Launch (console)",
+      "name": "RUN: _posts",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/src/ImageGenerator.ConsoleApp/bin/Debug/net5.0/ImageGenerator.ConsoleApp.dll",
       "args": [
+        "posts",
         "-p ${workspaceFolder}/../blog/_posts",
+        "-i ${workspaceFolder}/../blog/_assets/post-background.png",
+        "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
+        "-o ${workspaceFolder}/../blog/_assets/output/posts"
+      ],
+      "cwd": "${workspaceFolder}/src/ImageGenerator.ConsoleApp",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": "RUN: _devlog",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ImageGenerator.ConsoleApp/bin/Debug/net5.0/ImageGenerator.ConsoleApp.dll",
+      "args": [
+        "posts",
+        "-p ${workspaceFolder}/../blog/_devlog",
+        "-i ${workspaceFolder}/../blog/_assets/post-background.png",
+        "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
+        "-o ${workspaceFolder}/../blog/_assets/output/devlog"
+      ],
+      "cwd": "${workspaceFolder}/src/ImageGenerator.ConsoleApp",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    },
+    {
+      "name": "RUN: text",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/ImageGenerator.ConsoleApp/bin/Debug/net5.0/ImageGenerator.ConsoleApp.dll",
+      "args": [
+        "text",
+        "-t software by Stafford Williams",
+        "-n index.png",
         "-i ${workspaceFolder}/../blog/_assets/post-background.png",
         "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
         "-o ${workspaceFolder}/../blog/_assets/output/"
