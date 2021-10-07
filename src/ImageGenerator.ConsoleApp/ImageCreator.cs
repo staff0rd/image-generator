@@ -1,11 +1,24 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
 
+public class TextBlock
+{
+    public TextBlock(IPathCollection glyphs, Color color)
+    {
+        Glyphs = glyphs;
+        Color = color;
+    }
+    public IPathCollection Glyphs { get; set; }
+
+    public Color Color { get; set; }
+}
 public class ImageCreator
 {
     readonly string _backgroundFilePath;
@@ -20,32 +33,35 @@ public class ImageCreator
 
     public void RenderAndWrite(string outputFileName, string titleText, string bottomText, string tagsText = null, string subTitleText = null)
     {
-        //var lines = new List<IPathCollection>();
-        var titleHeight = subTitleText == null ? 500 : 375;
         var center = 1168;
-        var title = GetGlyphs(titleText, new Size(2340, titleHeight), _font);
-        if (subTitleText != null && title.Bounds.Height > 300)
-            center += (int)(title.Bounds.Height - 300);
-        title = title.Translate(1260, center - title.Bounds.Height);
-        lines.Add(title);
-        var tags = getTags(tagsText, center);
+        var padding = 100;
+        var left = 1260;
+        var lines = new List<TextBlock>();
+        var titleHeight = subTitleText == null ? 500 : 375;
 
-        var site = GetGlyphs(bottomText, new Size(2340, 75), _font);
-        site = site.Translate(1260, center + 200);
-        var siteColor = Color.FromRgb(200, 200, 200);
+        if (!string.IsNullOrWhiteSpace(subTitleText))
+            lines.Add(new TextBlock(GetGlyphs(subTitleText, new Size(2340, 100), _font), _textColor));
 
-        var subTitle = GetGlyphs(subTitleText, new Size(2340, 100), _font);
-        subTitle = subTitle.Translate(1260, center - title.Bounds.Height - subTitle.Bounds.Height - 50);
+        lines.Add(new TextBlock(GetGlyphs(titleText, new Size(2340, titleHeight), _font), _textColor));
+
+        if (!string.IsNullOrWhiteSpace(tagsText))
+            lines.Add(new TextBlock(getTags(tagsText, center), _textColor));
+
+        lines.Add(new TextBlock(GetGlyphs(bottomText, new Size(2340, 75), _font), Color.FromRgb(200, 200, 200)));
+
+        var totalHeight = lines.Sum(line => line.Glyphs.Max(p => p.Bounds.Bottom)) + (lines.Count - 1) * padding;
+
+        for (int i = 0; i < lines.Count; i++)
+        {
+            var previous = lines.Take(i).Sum(p => p.Glyphs.Max(p => p.Bounds.Bottom) + padding * i);
+            lines.ElementAt(i).Glyphs = lines.ElementAt(i).Glyphs.Translate(left, center - totalHeight / 2 + previous);
+        }
 
         using (Image img = Image.Load(_backgroundFilePath))
         {
             img.Mutate(i =>
             {
-                i.Fill(Brushes.Solid(_textColor), subTitle);
-                i.Fill(Brushes.Solid(_textColor), title);
-                if (tags != null)
-                    i.Fill(Brushes.Solid(_textColor), tags);
-                i.Fill(Brushes.Solid(siteColor), site);
+                lines.ForEach(line => i.Fill(Brushes.Solid(line.Color), line.Glyphs));
             });
 
             img.Save(outputFileName);
