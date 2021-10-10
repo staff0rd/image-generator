@@ -10,9 +10,10 @@ namespace ImageGenerator.ConsoleApp
     {
         static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<PostOptions, TextOptions>(args).MapResult(
+            return Parser.Default.ParseArguments<PostOptions, TextOptions, JsonOptions>(args).MapResult(
                 (PostOptions o) => new PostGenerator(o).Generate(),
                 (TextOptions o) => new TextGenerator(o).Generate(),
+                (JsonOptions o) => new JsonGenerator(o).Generate(),
                 errs => 1);
         }
     }

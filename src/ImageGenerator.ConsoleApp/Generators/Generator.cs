@@ -40,9 +40,9 @@ public abstract class Generator<T> where T : DefaultOptions
         }
     }
 
-    protected static string SplitTextIntoTwoLines(string text)
+    protected static string SplitTextIntoTwoLines(string text, int lineLength = 20)
     {
-        if (text.Length <= 20)
+        if (text.Length <= lineLength)
             return text;
         var middle = (int)(text.Length * .6);
         var splitAt = String.Concat(text.Take(middle)).LastIndexOf(' ');
