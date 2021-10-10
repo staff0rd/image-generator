@@ -14,13 +14,8 @@ public class Site
 }
 public class Page
 {
-    [JsonPropertyName("layout")]
-    public string Layout { get; set; }
-
-    [JsonPropertyName("type")]
-    public string Type { get; set; }
-    [JsonPropertyName("url")]
-    public string Url { get; set; }
+    [JsonPropertyName("card")]
+    public bool Card { get; set; }
 
     [JsonExtensionData]
     public Dictionary<string, JsonElement> ConvertTitle { get; set; }
@@ -49,19 +44,17 @@ public class JsonGenerator : Generator<JsonOptions>
         };
         var site = JsonSerializer.Deserialize<Site>(json, options);
         site.Pages
-            .Where(p => p.Title != "404" && p.Title != "null" && p.Type != "note" && p.Url != "/" && !p.Url.StartsWith("/games"))
+            .Where(p => p.Card)
             .ToList()
             .ForEach(page =>
             {
-                Console.WriteLine($"title: {page.Title}, type: {page.Type}, url: {page.Url}");
                 try
                 {
-
                     var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{HttpUtility.UrlEncode(page.Title)}.png");
                     var titleText = SplitTextIntoTwoLines(page.Title);
                     var bottomText = $"staffordwilliams.com";
                     _imageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
-                    Console.WriteLine($"Built {page.Title}");
+                    Console.WriteLine($"Built {page.Title} to {outputFileName}");
                 }
                 catch
                 {

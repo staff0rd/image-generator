@@ -73,7 +73,7 @@
       "args": [
         "text",
         "-t software by Stafford Williams",
-        "-n index.png",
+        "-n home.png",
         "-i ${workspaceFolder}/../blog/_assets/post-background.png",
         "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
         "-o ${workspaceFolder}/output/"
