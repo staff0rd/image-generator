@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Web;
 using ImageGenerator.ConsoleApp;
 
 public class Site
@@ -50,7 +49,7 @@ public class JsonGenerator : Generator<JsonOptions>
             {
                 try
                 {
-                    var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{HttpUtility.UrlEncode(page.Title)}.png");
+                    var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{page.Title}.png");
                     var titleText = SplitTextIntoTwoLines(page.Title);
                     var bottomText = $"staffordwilliams.com";
                     _imageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
