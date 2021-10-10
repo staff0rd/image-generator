@@ -15,11 +15,14 @@
         "-p ${workspaceFolder}/../blog/_posts",
         "-i ${workspaceFolder}/../blog/_assets/post-background.png",
         "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
-        "-o ${workspaceFolder}/../blog/_assets/output/posts"
+        "-o ${workspaceFolder}/output/posts"
       ],
       "cwd": "${workspaceFolder}/src/ImageGenerator.ConsoleApp",
       "console": "internalConsole",
-      "stopAtEntry": false
+      "stopAtEntry": false,
+      "logging": {
+        "moduleLoad": false
+      }
     },
     {
       "name": "RUN: _devlog",
@@ -32,11 +35,14 @@
         "-p ${workspaceFolder}/../blog/_devlog",
         "-i ${workspaceFolder}/../blog/_assets/post-background.png",
         "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
-        "-o ${workspaceFolder}/../blog/_assets/output/devlog"
+        "-o ${workspaceFolder}/output/devlog"
       ],
       "cwd": "${workspaceFolder}/src/ImageGenerator.ConsoleApp",
       "console": "internalConsole",
-      "stopAtEntry": false
+      "stopAtEntry": false,
+      "logging": {
+        "moduleLoad": false
+      }
     },
     {
       "name": "RUN: text",
@@ -50,17 +56,14 @@
         "-n index.png",
         "-i ${workspaceFolder}/../blog/_assets/post-background.png",
         "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
-        "-o ${workspaceFolder}/../blog/_assets/output/"
+        "-o ${workspaceFolder}/output/"
       ],
       "cwd": "${workspaceFolder}/src/ImageGenerator.ConsoleApp",
       "console": "internalConsole",
-      "stopAtEntry": false
-    },
-    {
-      "name": ".NET Core Attach",
-      "type": "coreclr",
-      "request": "attach",
-      "processId": "${command:pickProcess}"
+      "stopAtEntry": false,
+      "logging": {
+        "moduleLoad": false
+      }
     }
   ]
 }

@@ -10,14 +10,17 @@ using SixLabors.ImageSharp.Processing;
 
 public class TextBlock
 {
-    public TextBlock(IPathCollection glyphs, Color color)
+    public TextBlock(IPathCollection glyphs, string text, Color color)
     {
         Glyphs = glyphs;
         Color = color;
+        Text = text;
     }
     public IPathCollection Glyphs { get; set; }
 
     public Color Color { get; set; }
+
+    public string Text { get; set; }
 }
 public class ImageCreator
 {
@@ -33,47 +36,79 @@ public class ImageCreator
 
     public void RenderAndWrite(string outputFileName, string titleText, string bottomText, string tagsText = null, string subTitleText = null)
     {
-        var center = 1168;
+        var center = 1130;
         var padding = 100;
         var left = 1260;
         var lines = new List<TextBlock>();
-        var titleHeight = subTitleText == null ? 500 : 375;
+        var titleHeight = 500;
+        var DRAW_LINE_GUIDES = false;
+        var DRAW_GUIDES = false;
 
         if (!string.IsNullOrWhiteSpace(subTitleText))
-            lines.Add(new TextBlock(GetGlyphs(subTitleText, new Size(2340, 100), _font), _textColor));
+            lines.Add(new TextBlock(GetGlyphs(subTitleText, new Size(2340, 100), _font), subTitleText, _textColor));
 
-        lines.Add(new TextBlock(GetGlyphs(titleText, new Size(2340, titleHeight), _font), _textColor));
+        lines.Add(new TextBlock(GetGlyphs(titleText, new Size(2340, titleHeight), _font), titleText, _textColor));
 
         if (!string.IsNullOrWhiteSpace(tagsText))
-            lines.Add(new TextBlock(getTags(tagsText, center), _textColor));
+            lines.Add(new TextBlock(GetGlyphs(tagsText, new Size(2340, 75), _font), tagsText, _textColor));
 
-        lines.Add(new TextBlock(GetGlyphs(bottomText, new Size(2340, 75), _font), Color.FromRgb(200, 200, 200)));
+        lines.Add(new TextBlock(GetGlyphs(bottomText, new Size(2340, 75), _font), bottomText, Color.FromRgb(200, 200, 200)));
 
-        var totalHeight = lines.Sum(line => line.Glyphs.Max(p => p.Bounds.Bottom)) + (lines.Count - 1) * padding;
+        var totalHeight = lines.Sum(line => line.Glyphs.Bounds.Height) + ((lines.Count - 1) * padding);
+        var start = center - (totalHeight / 2);
+
+        if (DRAW_LINE_GUIDES)
+            Console.WriteLine($"Total height: {totalHeight}, start: {start}");
 
         for (int i = 0; i < lines.Count; i++)
         {
-            var previous = lines.Take(i).Sum(p => p.Glyphs.Max(p => p.Bounds.Bottom) + padding * i);
-            lines.ElementAt(i).Glyphs = lines.ElementAt(i).Glyphs.Translate(left, center - totalHeight / 2 + previous);
+            var previous = i == 0 ? start : lines.ElementAt(i - 1).Glyphs.Bounds.Bottom;
+            var next = previous + (i == 0 ? 0 : padding);
+
+            if (DRAW_LINE_GUIDES)
+                Console.WriteLine($"previous: {previous}, next: {next}, height: {lines.ElementAt(i).Glyphs.Bounds.Height}");
+
+            lines.ElementAt(i).Glyphs = lines.ElementAt(i).Glyphs.Translate(left, next);
         }
+
 
         using (Image img = Image.Load(_backgroundFilePath))
         {
             img.Mutate(i =>
             {
-                lines.ForEach(line => i.Fill(Brushes.Solid(line.Color), line.Glyphs));
+                lines.ForEach(line =>
+                {
+                    i.Fill(Brushes.Solid(line.Color), line.Glyphs);
+
+                    if (DRAW_LINE_GUIDES)
+                    {
+                        Console.WriteLine($"top: {line.Glyphs.Bounds.Top}, bottom: {line.Glyphs.Bounds.Bottom}, text: {line.Text}");
+                        i.DrawLines(Brushes.Solid(Color.Black), 3f,
+                            new PointF(100, line.Glyphs.Bounds.Top),
+                            new PointF(3900, line.Glyphs.Bounds.Top));
+                        i.DrawLines(Brushes.Solid(Color.Black), 3f,
+                            new PointF(100, line.Glyphs.Bounds.Bottom),
+                            new PointF(3900, line.Glyphs.Bounds.Bottom));
+                    }
+
+                });
+
+                if (DRAW_GUIDES)
+                {
+                    i.DrawLines(Brushes.Solid(Color.Red), 5f,
+                        new PointF(100, center),
+                        new PointF(3900, center));
+                    i.DrawLines(Brushes.Solid(Color.Red), 5f,
+                        new PointF(100, start),
+                        new PointF(3900, start));
+                    i.DrawLines(Brushes.Solid(Color.Red), 5f,
+                        new PointF(100, start + totalHeight),
+                        new PointF(3900, start + totalHeight));
+                }
             });
 
             img.Save(outputFileName);
         }
-    }
-
-    private IPathCollection getTags(string tagsText, int center)
-    {
-        if (string.IsNullOrWhiteSpace(tagsText)) return null;
-        var tags = GetGlyphs(tagsText, new Size(2340, 75), _font);
-        tags = tags.Translate(1260, center + 50);
-        return tags;
     }
 
     private static IPathCollection GetGlyphs(string text, Size targetSize, FontFamily fontFamily)
