@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using ImageGenerator.ConsoleApp;
 using SixLabors.Fonts;
@@ -8,14 +7,16 @@ using SixLabors.ImageSharp;
 public abstract class Generator<T> where T : DefaultOptions
 {
     protected readonly T _o;
-    protected readonly ImageCreator _imageCreator;
+    protected readonly RectangleImageCreator _rectangleImageCreator;
+    protected readonly SquareImageCreator _squareImageCreator;
 
     public Generator(T options)
     {
         _o = options;
         var fonts = new FontCollection();
         var font = fonts.Add(_o.FontPath.Trim());
-        _imageCreator = new ImageCreator(options.BackgroundImagePath, font);
+        _rectangleImageCreator = new RectangleImageCreator(options.BackgroundImagePath, font);
+        _squareImageCreator = new SquareImageCreator(options.SquareBackgroundImagePath, font);
     }
 
     public abstract void Generate(System.IO.DirectoryInfo outputDirectory);

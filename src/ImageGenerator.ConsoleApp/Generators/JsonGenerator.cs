@@ -52,7 +52,7 @@ public class JsonGenerator : Generator<JsonOptions>
                     var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{page.Title}.png");
                     var titleText = SplitTextIntoTwoLines(page.Title);
                     var bottomText = $"staffordwilliams.com";
-                    _imageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
+                    _rectangleImageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
                     Console.WriteLine($"Built {page.Title} to {outputFileName}");
                 }
                 catch

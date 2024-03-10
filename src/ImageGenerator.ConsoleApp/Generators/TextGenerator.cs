@@ -14,7 +14,7 @@ public class TextGenerator : Generator<TextOptions>
         {
             var titleText = SplitTextIntoTwoLines(_o.Text.Trim());
             var bottomText = $"staffordwilliams.com";
-            _imageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
+            _rectangleImageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
             Console.WriteLine($"Built");
         }
         catch

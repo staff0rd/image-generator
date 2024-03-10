@@ -14,6 +14,7 @@
         "posts",
         "-p ${workspaceFolder}/../blog/_posts",
         "-i ${workspaceFolder}/../blog/_assets/post-background.png",
+        "-s ${workspaceFolder}/../blog/_assets/post-background-square.png",
         "-f ${workspaceFolder}/../blog/_assets/Roboto-Regular.ttf",
         "-o ${workspaceFolder}/output/posts"
       ],

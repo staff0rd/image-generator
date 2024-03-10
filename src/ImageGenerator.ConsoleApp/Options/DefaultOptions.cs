@@ -10,5 +10,7 @@ namespace ImageGenerator.ConsoleApp
         public string FontPath { get; set; }
         [Option('o', Required = true, HelpText = "Output directory")]
         public string OutputDirectory { get; set; }
+        [Option('s', Required = true, HelpText = "Path to square background image")]
+        public string SquareBackgroundImagePath { get; set; }
     }
 }
