@@ -37,38 +37,38 @@ public class ImageCreator
     public void RenderAndWrite(string outputFileName, string titleText, string bottomText, string tagsText = null, string subTitleText = null)
     {
         var center = 1130;
-        var padding = 100;
-        var left = 1260;
-        var lines = new List<TextBlock>();
+        var ySpacing = 100;
+        var x = 1260;
+        var textBlocks = new List<TextBlock>();
         var titleHeight = 500;
         var DRAW_LINE_GUIDES = false;
         var DRAW_GUIDES = false;
 
         if (!string.IsNullOrWhiteSpace(subTitleText))
-            lines.Add(new TextBlock(GetGlyphs(subTitleText, new Size(2340, 100), _font), subTitleText, _textColor));
+            textBlocks.Add(new TextBlock(GetGlyphs(subTitleText, new Size(2340, 100), _font), subTitleText, _textColor));
 
-        lines.Add(new TextBlock(GetGlyphs(titleText, new Size(2340, titleHeight), _font), titleText, _textColor));
+        textBlocks.Add(new TextBlock(GetGlyphs(titleText, new Size(2340, titleHeight), _font), titleText, _textColor));
 
         if (!string.IsNullOrWhiteSpace(tagsText))
-            lines.Add(new TextBlock(GetGlyphs(tagsText, new Size(2340, 75), _font), tagsText, _textColor));
+            textBlocks.Add(new TextBlock(GetGlyphs(tagsText, new Size(2340, 75), _font), tagsText, _textColor));
 
-        lines.Add(new TextBlock(GetGlyphs(bottomText, new Size(2340, 75), _font), bottomText, Color.FromRgb(200, 200, 200)));
+        textBlocks.Add(new TextBlock(GetGlyphs(bottomText, new Size(2340, 75), _font), bottomText, Color.FromRgb(200, 200, 200)));
 
-        var totalHeight = lines.Sum(line => line.Glyphs.Bounds.Height) + ((lines.Count - 1) * padding);
-        var start = center - (totalHeight / 2);
+        var totalHeight = textBlocks.Sum(line => line.Glyphs.Bounds.Height) + ((textBlocks.Count - 1) * ySpacing);
+        var startY = center - (totalHeight / 2);
 
         if (DRAW_LINE_GUIDES)
-            Console.WriteLine($"Total height: {totalHeight}, start: {start}");
+            Console.WriteLine($"Total height: {totalHeight}, start: {startY}");
 
-        for (int i = 0; i < lines.Count; i++)
+        for (int i = 0; i < textBlocks.Count; i++)
         {
-            var previous = i == 0 ? start : lines.ElementAt(i - 1).Glyphs.Bounds.Bottom;
-            var next = previous + (i == 0 ? 0 : padding);
+            var previousY = i == 0 ? startY : textBlocks.ElementAt(i - 1).Glyphs.Bounds.Bottom;
+            var nextY = previousY + (i == 0 ? 0 : ySpacing);
 
             if (DRAW_LINE_GUIDES)
-                Console.WriteLine($"previous: {previous}, next: {next}, height: {lines.ElementAt(i).Glyphs.Bounds.Height}");
+                Console.WriteLine($"previous: {previousY}, next: {nextY}, height: {textBlocks.ElementAt(i).Glyphs.Bounds.Height}");
 
-            lines.ElementAt(i).Glyphs = lines.ElementAt(i).Glyphs.Translate(left, next);
+            textBlocks.ElementAt(i).Glyphs = textBlocks.ElementAt(i).Glyphs.Translate(x, nextY);
         }
 
 
@@ -76,34 +76,34 @@ public class ImageCreator
         {
             img.Mutate(i =>
             {
-                lines.ForEach(line =>
+                textBlocks.ForEach(tb =>
                 {
-                    i.Fill(Brushes.Solid(line.Color), line.Glyphs);
+                    i.Fill(Brushes.Solid(tb.Color), tb.Glyphs);
 
                     if (DRAW_LINE_GUIDES)
                     {
-                        Console.WriteLine($"top: {line.Glyphs.Bounds.Top}, bottom: {line.Glyphs.Bounds.Bottom}, text: {line.Text}");
-                        i.DrawLines(Brushes.Solid(Color.Black), 3f,
-                            new PointF(100, line.Glyphs.Bounds.Top),
-                            new PointF(3900, line.Glyphs.Bounds.Top));
-                        i.DrawLines(Brushes.Solid(Color.Black), 3f,
-                            new PointF(100, line.Glyphs.Bounds.Bottom),
-                            new PointF(3900, line.Glyphs.Bounds.Bottom));
+                        Console.WriteLine($"top: {tb.Glyphs.Bounds.Top}, bottom: {tb.Glyphs.Bounds.Bottom}, text: {tb.Text}");
+                        i.DrawLine(Brushes.Solid(Color.Black), 3f,
+                            new PointF(100, tb.Glyphs.Bounds.Top),
+                            new PointF(3900, tb.Glyphs.Bounds.Top));
+                        i.DrawLine(Brushes.Solid(Color.Black), 3f,
+                            new PointF(100, tb.Glyphs.Bounds.Bottom),
+                            new PointF(3900, tb.Glyphs.Bounds.Bottom));
                     }
 
                 });
 
                 if (DRAW_GUIDES)
                 {
-                    i.DrawLines(Brushes.Solid(Color.Red), 5f,
+                    i.DrawLine(Brushes.Solid(Color.Red), 5f,
                         new PointF(100, center),
                         new PointF(3900, center));
-                    i.DrawLines(Brushes.Solid(Color.Red), 5f,
-                        new PointF(100, start),
-                        new PointF(3900, start));
-                    i.DrawLines(Brushes.Solid(Color.Red), 5f,
-                        new PointF(100, start + totalHeight),
-                        new PointF(3900, start + totalHeight));
+                    i.DrawLine(Brushes.Solid(Color.Red), 5f,
+                        new PointF(100, startY),
+                        new PointF(3900, startY));
+                    i.DrawLine(Brushes.Solid(Color.Red), 5f,
+                        new PointF(100, startY + totalHeight),
+                        new PointF(3900, startY + totalHeight));
                 }
             });
 
@@ -114,8 +114,8 @@ public class ImageCreator
     private static IPathCollection GetGlyphs(string text, Size targetSize, FontFamily fontFamily)
     {
         Font font = new Font(fontFamily, 100); // size doesn't matter too much as we will be scaling shortly anyway
-        RendererOptions style = new RendererOptions(font, 72); // again dpi doesn't overlay matter as this code genreates a vector
-        style.Origin = new System.Numerics.Vector2(targetSize.Width / 2, 0);
+        TextOptions style = new TextOptions(font); // again dpi doesn't overlay matter as this code genreates a vector
+        style.Origin = new System.Numerics.Vector2(-targetSize.Width / 2, 0);
         // this is the important line, where we render the glyphs to a vector instead of directly to the image
         // this allows further vector manipulation (scaling, translating) etc without the expensive pixel operations.
         IPathCollection glyphs = TextBuilder.GenerateGlyphs(text, style);
@@ -124,14 +124,13 @@ public class ImageCreator
         var heightScale = (targetSize.Height / glyphs.Bounds.Height);
         var minScale = Math.Min(widthScale, heightScale);
 
-        // scale so that it will fit exactly in image shape once rendered
+        // // scale so that it will fit exactly in image shape once rendered
         glyphs = glyphs.Scale(minScale);
 
         // move the vectorised glyph so that it touchs top and left edges 
         // could be tweeked to center horizontaly & vertically here
         glyphs = glyphs.Translate(-glyphs.Bounds.Location);
 
-        //glyphs = glyphs.Translate(0, targetSize.Height * 3);
         return glyphs;
     }
 }

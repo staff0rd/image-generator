@@ -1,5 +1,6 @@
 using System;
 using ImageGenerator.ConsoleApp;
+using System.Linq;
 
 public class PostGenerator : Generator<PostOptions>
 {
@@ -8,7 +9,7 @@ public class PostGenerator : Generator<PostOptions>
     public override void Generate(System.IO.DirectoryInfo outputDirectory)
     {
         var cardCreator = new CardCreator();
-        var cards = cardCreator.GetFromPosts(_o.PostsDirectory.Trim());
+        var cards = cardCreator.GetFromPosts(_o.PostsDirectory.Trim()).OrderBy(c => c.Date);
 
         foreach (var card in cards)
         {

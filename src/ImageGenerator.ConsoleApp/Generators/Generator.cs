@@ -14,7 +14,7 @@ public abstract class Generator<T> where T : DefaultOptions
     {
         _o = options;
         var fonts = new FontCollection();
-        var font = fonts.Install(_o.FontPath.Trim());
+        var font = fonts.Add(_o.FontPath.Trim());
         _imageCreator = new ImageCreator(options.BackgroundImagePath, font);
     }
 
