@@ -17,16 +17,12 @@ public class SquareImageCreator : ImageCreator
     {
         var centerY = 1000;
         var ySpacing = 50;
-        var xPosition = 0;
+        var xPosition = 1000;
         var textBlocks = new List<TextBlock>();
-        var titleHeight = 500;
         var DRAW_LINE_GUIDES = false;
         var DRAW_GUIDES = false;
 
-        // if (!string.IsNullOrWhiteSpace(subTitleText))
-        //     textBlocks.Add(new TextBlock(GetGlyphs(subTitleText, new Size(2340, 100), _font), subTitleText, _textColor));
-
-        textBlocks.Add(new TextBlock(GetGlyphs(titleText, new Size(1800, titleHeight), _font, TextAlignment.Center), titleText, _textColor));
+        textBlocks.Add(new TextBlock(GetGlyphs(titleText, new Size(1800, 500), _font, TextAlignment.Center), titleText, _textColor));
 
         textBlocks.Add(new TextBlock(GetGlyphs(bottomText, new Size(1800, 75), _font, TextAlignment.Center), bottomText, Color.FromRgb(200, 200, 200)));
 

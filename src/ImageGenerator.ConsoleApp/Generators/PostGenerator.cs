@@ -9,7 +9,7 @@ public class PostGenerator : Generator<PostOptions>
     public override void Generate(System.IO.DirectoryInfo outputDirectory)
     {
         var cardCreator = new CardCreator();
-        var cards = cardCreator.GetFromPosts(_o.PostsDirectory.Trim()).OrderBy(c => c.Date).Take(1);
+        var cards = cardCreator.GetFromPosts(_o.PostsDirectory.Trim()).OrderBy(c => c.Date).Take(10);
 
         foreach (var card in cards)
         {

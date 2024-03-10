@@ -45,10 +45,6 @@ public abstract class Generator<T> where T : DefaultOptions
     {
         if (text.Length <= 20)
             return text;
-        var middle = (int)(text.Length * .6);
-        var splitAt = String.Concat(text.Take(middle)).LastIndexOf(' ');
-        if (splitAt > -1)
-            return text.ReplaceAtIndex(splitAt, '\n');
-        return text;
+        return Word.Wrap(text, 30);
     }
 }

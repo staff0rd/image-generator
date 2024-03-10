@@ -39,9 +39,12 @@ public abstract class ImageCreator
 
         // move the vectorised glyph so that it touchs top and left edges 
         // could be tweeked to center horizontaly & vertically here
-        glyphs = glyphs.Translate(-glyphs.Bounds.Location);
 
-        Console.WriteLine($"{text}: {glyphs.Bounds.Width}");
+        if (alignment == TextAlignment.Start)
+            glyphs = glyphs.Translate(-glyphs.Bounds.Location);
+        else
+            glyphs = glyphs.Translate(-glyphs.Bounds.Left - glyphs.Bounds.Width / 2, 0);
+
 
         return glyphs;
     }
