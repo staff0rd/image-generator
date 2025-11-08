@@ -17,6 +17,13 @@ public class PostGenerator : Generator<PostOptions>
             var rectangleOutputName = System.IO.Path.Combine(outputDirectory.FullName, card.FileName);
             var squareOutputName = System.IO.Path.Combine(outputDirectory.FullName, card.FileName.Replace(".png", "-square.png"));
 
+            // Check if files exist and skip if force is false
+            if (!_o.Force && System.IO.File.Exists(rectangleOutputName) && System.IO.File.Exists(squareOutputName))
+            {
+                Console.WriteLine($"Skipping {card.Title} - files already exist (use --force to overwrite)");
+                continue;
+            }
+
             try
             {
                 var titleText = SplitTextIntoTwoLines(card.Title);

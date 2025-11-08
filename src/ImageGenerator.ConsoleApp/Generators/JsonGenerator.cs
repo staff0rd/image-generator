@@ -47,9 +47,17 @@ public class JsonGenerator : Generator<JsonOptions>
             .ToList()
             .ForEach(page =>
             {
+                var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{page.Title}.png");
+
+                // Check if file exists and skip if force is false
+                if (!_o.Force && System.IO.File.Exists(outputFileName))
+                {
+                    Console.WriteLine($"Skipping {page.Title} - file already exists (use --force to overwrite)");
+                    return;
+                }
+
                 try
                 {
-                    var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{page.Title}.png");
                     var titleText = SplitTextIntoTwoLines(page.Title);
                     var bottomText = $"staffordwilliams.com";
                     _rectangleImageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
