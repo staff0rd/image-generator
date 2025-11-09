@@ -16,7 +16,9 @@ public abstract class Generator<T> where T : DefaultOptions
         var fonts = new FontCollection();
         var font = fonts.Add(_o.FontPath.Trim());
         _rectangleImageCreator = new RectangleImageCreator(options.BackgroundImagePath, font);
-        _squareImageCreator = new SquareImageCreator(options.SquareBackgroundImagePath, font);
+        _squareImageCreator = !string.IsNullOrWhiteSpace(options.SquareBackgroundImagePath)
+            ? new SquareImageCreator(options.SquareBackgroundImagePath, font)
+            : null;
     }
 
     public abstract void Generate(System.IO.DirectoryInfo outputDirectory);

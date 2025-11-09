@@ -42,6 +42,7 @@ public class JsonGenerator : Generator<JsonOptions>
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
         var site = JsonSerializer.Deserialize<Site>(json, options);
+        int skippedCount = 0;
         site.Pages
             .Where(p => p.Card)
             .ToList()
@@ -52,7 +53,7 @@ public class JsonGenerator : Generator<JsonOptions>
                 // Check if file exists and skip if force is false
                 if (!_o.Force && System.IO.File.Exists(outputFileName))
                 {
-                    Console.WriteLine($"Skipping {page.Title} - file already exists (use --force to overwrite)");
+                    skippedCount++;
                     return;
                 }
 
@@ -69,6 +70,9 @@ public class JsonGenerator : Generator<JsonOptions>
                 }
             });
 
-
+        if (skippedCount > 0)
+        {
+            Console.WriteLine($"Skipped {skippedCount} file{(skippedCount == 1 ? "" : "s")} that already exist (use --force to overwrite)");
+        }
     }
 }
