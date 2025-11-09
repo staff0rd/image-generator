@@ -27,6 +27,28 @@ public class Page
             return ConvertTitle?["title"].GetRawText().Trim('"');
         }
     }
+
+    [JsonIgnore]
+    public string Type
+    {
+        get
+        {
+            return ConvertTitle?.ContainsKey("type") == true
+                ? ConvertTitle["type"].GetRawText().Trim('"')
+                : null;
+        }
+    }
+
+    [JsonIgnore]
+    public string Layout
+    {
+        get
+        {
+            return ConvertTitle?.ContainsKey("layout") == true
+                ? ConvertTitle["layout"].GetRawText().Trim('"')
+                : null;
+        }
+    }
 }
 
 public class JsonGenerator : Generator<JsonOptions>
@@ -43,9 +65,15 @@ public class JsonGenerator : Generator<JsonOptions>
         };
         var site = JsonSerializer.Deserialize<Site>(json, options);
         int skippedCount = 0;
-        site.Pages
-            .Where(p => p.Card)
-            .ToList()
+        var pages = site.Pages.Where(p => p.Card);
+
+        // Filter by type if specified
+        if (!string.IsNullOrEmpty(_o.Type))
+        {
+            pages = pages.Where(p => p.Type == _o.Type);
+        }
+
+        pages.ToList()
             .ForEach(page =>
             {
                 var outputFileName = System.IO.Path.Combine(outputDirectory.FullName, $"{page.Title}.png");
@@ -61,7 +89,8 @@ public class JsonGenerator : Generator<JsonOptions>
                 {
                     var titleText = SplitTextIntoTwoLines(page.Title);
                     var bottomText = $"staffordwilliams.com";
-                    _rectangleImageCreator.RenderAndWrite(outputFileName, titleText, bottomText);
+                    var subTitleText = page.Layout == "note" ? "notes on" : null;
+                    _rectangleImageCreator.RenderAndWrite(outputFileName, titleText, bottomText, null, subTitleText);
                     Console.WriteLine($"Built {page.Title} to {outputFileName}");
                 }
                 catch
