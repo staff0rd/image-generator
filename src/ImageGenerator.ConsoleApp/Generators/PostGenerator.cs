@@ -9,7 +9,7 @@ public class PostGenerator : Generator<PostOptions>
     public override void Generate(System.IO.DirectoryInfo outputDirectory)
     {
         var cardCreator = new CardCreator();
-        var cards = cardCreator.GetFromPosts(_o.PostsDirectory.Trim()).OrderBy(c => c.Date);
+        var cards = cardCreator.GetFromPosts(_o.PostsDirectory.Trim(), _o.Layout).OrderBy(c => c.Date);
         int skippedCount = 0;
 
         foreach (var card in cards)

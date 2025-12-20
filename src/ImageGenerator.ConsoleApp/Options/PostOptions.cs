@@ -7,5 +7,8 @@ namespace ImageGenerator.ConsoleApp
     {
         [Option('p', Required = false, HelpText = "Path to posts")]
         public string PostsDirectory { get; set; }
+
+        [Option('l', "layout", Required = false, HelpText = "Layout type (devlog)")]
+        public string Layout { get; set; }
     }
 }

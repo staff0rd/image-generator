@@ -28,7 +28,7 @@ namespace ImageGenerator.ConsoleApp
             }
         }
 
-        public IEnumerable<Card> GetFromPosts(string pathToPosts)
+        public IEnumerable<Card> GetFromPosts(string pathToPosts, string layout = null)
         {
             var posts = GetPosts(pathToPosts);
 
@@ -53,11 +53,6 @@ namespace ImageGenerator.ConsoleApp
                     .Replace("tags:", "")
                     .Replace("[", "")
                     .Replace("]", "");
-
-                var layout = lines.FirstOrDefault(line => line.StartsWith("layout:"))
-                    .Replace("layout:", "")
-                    .Trim()
-                    .Trim('"');
 
                 var version = lines.FirstOrDefault(line => line.StartsWith("version:"))
                     ?.Replace("version:", "")
